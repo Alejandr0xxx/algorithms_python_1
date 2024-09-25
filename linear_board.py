@@ -1,4 +1,4 @@
-from .settings   import *
+from global_settings  import BOARD_LENGTH, VICTORY_STRIKE
 from list_utils import *
 class LinearBoard:
     """A class representing a linear board
@@ -6,6 +6,11 @@ class LinearBoard:
     o player 2
     None empty place
     """
+    @classmethod
+    def fromList(cls, list):
+        board = cls()
+        board._row = list
+        return board
     def __init__(self):
         """empty list"""
         self._row = [None for i in range(BOARD_LENGTH)]

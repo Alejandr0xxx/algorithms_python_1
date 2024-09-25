@@ -1,6 +1,6 @@
 import pytest
-from linear_board import *
-from .settings import *
+from linear_board import LinearBoard
+from global_settings import VICTORY_STRIKE, BOARD_LENGTH
 
 # Test the function to initialize the board
 def test_empty_board():

@@ -23,16 +23,16 @@ def test_vertical_victory():
 
 def test_sinking_victory():
     sinking = SquareBoard().fromList([[None, None, 'o',None],
-                                    ['x', 'o', None, None],
-                                    ['o', None, None, None],
-                                    ['x', None, None, None]])
-    assert sinking._any_sinking_victory('x') == False
-    assert sinking._any_sinking_victory('o') == True
+                                    [None, 'x', None, None],
+                                    ['o', None, 'x', None],
+                                    ['x', None, 'x', 'x']])
+    assert sinking._any_sinking_victory('x') == True
+    assert sinking._any_sinking_victory('o') == False
 
 def test_rising_victory():
     rising = SquareBoard().fromList([[None, None, 'o',None],
                                     ['x', 'o', None, None],
-                                    ['o', 'x', None, None],
+                                    ['o', None, None, None],
                                     ['x', None, 'x', None]])
-    assert rising._any_rising_victory('x') == True
-    assert rising._any_rising_victory('o') == False
+    assert rising._any_rising_victory('x') == False
+    assert rising._any_rising_victory('o') == True

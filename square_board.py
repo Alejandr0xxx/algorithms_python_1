@@ -19,6 +19,9 @@ class SquareBoard:
     def __init__(self):
         self.board = [LinearBoard() for _ in range(BOARD_LENGTH)]
 
+    def add(self, char, row):
+        self.board[row].add(char)
+
     def is_empty(self):
         return all(b.is_empty() for b in self.board)
 
@@ -62,3 +65,6 @@ class SquareBoard:
     # DUNDERS
     def __repr__(self) -> str:
         return f"{self.__class__}: {self.board}"
+    
+    def __iter__(self) -> iter:
+        return iter(self.board)

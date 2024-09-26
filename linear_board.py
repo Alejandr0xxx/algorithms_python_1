@@ -42,3 +42,11 @@ class LinearBoard:
     
     def get_row(self, index):
         return self._row[index]
+    
+    #DUNDERS 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, LinearBoard):
+            return self._row == other._row
+
+    def __hash__(self) -> int:
+        return hash(self._row)

@@ -14,7 +14,7 @@ def test_play():
     )
     after = SquareBoard.fromList(
         [
-            ['o', None, None, None],
+            ['x', None, None, None],
             ["x", "o", "x", "o"],
             ["o", "x", "o", "x"],
             ["x", None, None, None],

@@ -17,6 +17,6 @@ def test_base_oracle():
         RowRecommendation(3, RowClassification.MAYBE)
     ]
     
-    rappel = BaseOracle()
-    assert len(rappel.get_recommendations(board)) == len(expected)
-    assert rappel.get_recommendations(board) == expected
+    test = BaseOracle.get_recommendations(board)
+    assert len(test) == len(expected)
+    assert test == expected

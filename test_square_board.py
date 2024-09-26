@@ -3,7 +3,7 @@ def test_empty_square_board():
     empty = SquareBoard()
     assert empty != None
     assert empty.is_full() == False
-    assert empty.is_victory('x') == False
+    assert empty.is_victory('o') == False
 
 def test_horizontal_victory():
     horizontal = SquareBoard().fromList([['x', 'o', 'o','o'],

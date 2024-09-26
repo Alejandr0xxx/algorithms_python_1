@@ -5,14 +5,9 @@ class RowClassification(Enum):
     MAYBE = 'MAYBE'
 
 class BaseOracle:
-    def get_recommendations(self, board):
-        recommendations = []
-        for i, row in enumerate(board):
-            recommendations.append(RowRecommendation.recommend(i, row))
-        return recommendations
-
-
-
+    @staticmethod
+    def get_recommendations(board):
+        return [RowRecommendation.recommend(i, row) for i, row in enumerate(board)]
 
 class RowRecommendation():
     def __init__(self, index, recommendation):

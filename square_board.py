@@ -68,3 +68,11 @@ class SquareBoard:
     
     def __iter__(self) -> iter:
         return iter(self.board)
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, SquareBoard):
+                return self.board == other.board
+        return False
+
+    def __hash__(self) -> int:
+        return hash(self.board)

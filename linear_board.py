@@ -16,7 +16,7 @@ class LinearBoard:
         return board
     def __init__(self):
         """empty list"""
-        self._row = [None for i in range(BOARD_LENGTH)]
+        self._row = [None for _ in range(BOARD_LENGTH)]
 
     def add(self, char):
         """add value to the board"""
@@ -37,3 +37,5 @@ class LinearBoard:
     def is_tie(self, char1, char2):
         return (self.is_victory(char1) == False) and (self.is_victory(char2)== False) 
     
+    def __iter__(self):
+        return iter(self._row)

@@ -2,6 +2,7 @@ from linear_board import LinearBoard
 from global_settings import *
 from list_utils import *
 
+
 class SquareBoard:
 
     @classmethod
@@ -15,8 +16,6 @@ class SquareBoard:
         board.board = list(map(lambda x: LinearBoard.fromList(x), list_of_list))
         return board
 
-    
-    
     def __init__(self):
         self.board = [LinearBoard() for _ in range(BOARD_LENGTH)]
 
@@ -30,24 +29,36 @@ class SquareBoard:
         return (
             self._any_horizontal_victory(char)
             or self._any_vertical_victory(char)
-            or self._any_sinking_victory()
-            or self._any_rising_victory()
+            or self._any_sinking_victory(char)
+            or self._any_rising_victory(char)
         )
 
     def _any_horizontal_victory(self, char):
         return any(r.is_victory(char) for r in self.board)
 
     def _any_vertical_victory(self, char):
-        temp_board = transpose_elements(self.board)
+        temp_board = [
+            LinearBoard.fromList(
+                [self.board[row]._row[col] for row in range(BOARD_LENGTH)]
+            )
+            for col in range(BOARD_LENGTH)
+        ]
         return any(r.is_victory(char) for r in temp_board)
 
-    def _any_sinking_victory(self):
+    def _any_sinking_victory(self, char):
+        max_length= BOARD_LENGTH - VICTORY_STRIKE
+        for row in range(max_length+1):
+            for col in range(max_length+1):
+                    if (all(self.board[row + i]._row[col + i] == char for i in range(VICTORY_STRIKE))):
+                        return True
         return False
-
-    def _any_rising_victory(self):
+    def _any_rising_victory(self, char):
+        max_length= BOARD_LENGTH - VICTORY_STRIKE
+        for row in range(max_length + 1):
+            for col in range(VICTORY_STRIKE - 1, BOARD_LENGTH):
+                if all(self.board[row + i]._row[col-i] == char for i in range(VICTORY_STRIKE)):
+                    return True
         return False
-
     # DUNDERS
-
     def __repr__(self) -> str:
         return f"{self.__class__}: {self.board}"

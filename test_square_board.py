@@ -14,25 +14,25 @@ def test_horizontal_victory():
     assert horizontal._any_horizontal_victory('o') == True
 
 def test_vertical_victory():
-    vertical = SquareBoard().fromList(['x', None, 'o',None],
+    vertical = SquareBoard().fromList([['x', None, 'o',None],
                                     ['x', None, None, None],
                                     ['x', None, None, None],
-                                    [None, None, None, None])
+                                    [None, None, None, None]])
     assert vertical._any_vertical_victory('x') == True
     assert vertical._any_vertical_victory('o') == False
 
 def test_sinking_victory():
-    sinking = SquareBoard().fromList([None, None, 'o',None],
-                                    ['x', 'o', None, None],
-                                    ['o', None, None, None],
-                                    ['x', None, None, None])
-    assert sinking._any_sinking_victory('x') == False
-    assert sinking._any_sinking_victory('o') == True
+    sinking = SquareBoard().fromList([[None, None, 'o',None],
+                                    [None, 'x', None, None],
+                                    ['o', None, 'x', None],
+                                    ['x', None, 'x', 'x']])
+    assert sinking._any_sinking_victory('x') == True
+    assert sinking._any_sinking_victory('o') == False
 
 def test_rising_victory():
-    rising = SquareBoard().fromList([None, None, 'o',None],
+    rising = SquareBoard().fromList([[None, None, 'o',None],
                                     ['x', 'o', None, None],
-                                    ['o', 'x', None, None],
-                                    ['x', None, 'x', None])
-    assert rising._any_rising_victory('x') == True
-    assert rising._any_rising_victory('o') == False
+                                    ['o', None, None, None],
+                                    ['x', None, 'x', None]])
+    assert rising._any_rising_victory('x') == False
+    assert rising._any_rising_victory('o') == True

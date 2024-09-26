@@ -1,13 +1,16 @@
 from global_settings  import BOARD_LENGTH, VICTORY_STRIKE
 from list_utils import *
 class LinearBoard:
-    """A class representing a linear board
+    """
+    A class representing a linear board
     x player 1
     o player 2
     None empty place
     """
     @classmethod
     def fromList(cls, list):
+        if len(list)!= BOARD_LENGTH:
+            raise ValueError(f'List length must be equal to {BOARD_LENGTH}, but got {len(list)}') 
         board = cls()
         board._row = list
         return board
@@ -34,3 +37,8 @@ class LinearBoard:
     def is_tie(self, char1, char2):
         return (self.is_victory(char1) == False) and (self.is_victory(char2)== False) 
     
+    def __iter__(self):
+        return iter(self._row)
+    
+    def get_row(self, index):
+        return self._row[index]

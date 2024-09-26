@@ -16,7 +16,7 @@ class LinearBoard:
         return board
     def __init__(self):
         """empty list"""
-        self._row = [None for _ in range(BOARD_LENGTH)]
+        self._row = [None for i in range(BOARD_LENGTH)]
 
     def add(self, char):
         """add value to the board"""
@@ -39,3 +39,6 @@ class LinearBoard:
     
     def __iter__(self):
         return iter(self._row)
+    
+    def get_row(self, index):
+        return self._row[index]

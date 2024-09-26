@@ -19,11 +19,14 @@ class SquareBoard:
     def __init__(self):
         self.board = [LinearBoard() for _ in range(BOARD_LENGTH)]
 
+    def add(self, char, row):
+        self.board[row].add(char)
+
     def is_empty(self):
-        return all(b.is_empty() for b in self.board)
+        return all(r.is_empty() for r in self.board)
 
     def is_full(self):
-        return all(b.is_full() for b in self.board)
+        return all(r.is_full() for r in self.board)
 
     def is_victory(self, char):
         return (
@@ -39,26 +42,29 @@ class SquareBoard:
     def _any_vertical_victory(self, char):
         temp_board = [
             LinearBoard.fromList(
-                [self.board[row]._row[col] for row in range(BOARD_LENGTH)]
+                [self.board[row].get_row(col) for row in range(BOARD_LENGTH)]
             )
             for col in range(BOARD_LENGTH)
         ]
         return any(r.is_victory(char) for r in temp_board)
 
     def _any_sinking_victory(self, char):
-        max_length= BOARD_LENGTH - VICTORY_STRIKE
-        for row in range(max_length+1):
-            for col in range(max_length+1):
-                    if (all(self.board[row + i]._row[col + i] == char for i in range(VICTORY_STRIKE))):
+        for row in range(BOARD_LENGTH):
+            for col in range(BOARD_LENGTH):
+                if (col + VICTORY_STRIKE <= BOARD_LENGTH and row + VICTORY_STRIKE <= BOARD_LENGTH):
+                    if (all(self.board[row + i].get_row(col + i) == char for i in range(VICTORY_STRIKE))):
                         return True
         return False
     def _any_rising_victory(self, char):
-        max_length= BOARD_LENGTH - VICTORY_STRIKE
-        for row in range(max_length + 1):
-            for col in range(VICTORY_STRIKE - 1, BOARD_LENGTH):
-                if all(self.board[row + i]._row[col-i] == char for i in range(VICTORY_STRIKE)):
-                    return True
+        for row in range(BOARD_LENGTH):
+            for col in range(BOARD_LENGTH):
+                if (col - (VICTORY_STRIKE - 1) >= 0 and row + VICTORY_STRIKE <= BOARD_LENGTH):
+                    if all(self.board[row + i].get_row(col - i) == char for i in range(VICTORY_STRIKE)):
+                        return True
         return False
     # DUNDERS
     def __repr__(self) -> str:
         return f"{self.__class__}: {self.board}"
+    
+    def __iter__(self) -> iter:
+        return iter(self.board)

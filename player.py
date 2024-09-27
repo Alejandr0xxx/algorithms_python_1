@@ -2,29 +2,27 @@ from oracle import BaseOracle, RowClassification
 
 
 class Player:
-    def __init__(self, name, char, oracle=BaseOracle):
+    def __init__(self, name, char=None, oracle=BaseOracle, opponent=None):
         self.name = name
         self.char = char
         self._oracle = oracle
+        self._opponent = opponent
 
     def play(self, board):
         (bestOption, recommendations) = self._ask_oracle(board)
         if bestOption is not None:
             return self._play_on(board, bestOption)
         else:
-            raise Exception(f'Could not find best option')
+            raise Exception(f"Could not find best option")
 
     def _ask_oracle(self, board):
         recommendations = self._oracle.get_recommendations(board)
         bestOption = self._chose(recommendations)
         if recommendations is not None:
-            return (
-                bestOption,
-                recommendations
-            )
+            return (bestOption, recommendations)
         return None
 
-    def _play_on(self, board, position):	
+    def _play_on(self, board, position):
         board.add(self.char, position)
         return board
 
@@ -35,16 +33,16 @@ class Player:
             )
         )
         if filtered_recommendations:
-            return filtered_recommendations[0].index 
+            return filtered_recommendations[0].index
         return None
 
 
 class HumanPlayer(Player):
     def __init__(self, name, char):
         super().__init__(name, char)
-    
+
     # def _ask_oracle(self, board):
-        
+
     #     while True:
     #         raw = int(input(f'Select a column between 0 and {len(board)}'))
     #         if _is_int(raw) and _is_non_full_row(board, raw) and _is_within_valid_row(board, raw):

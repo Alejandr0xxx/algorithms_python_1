@@ -42,24 +42,27 @@ class SquareBoard:
     def _any_vertical_victory(self, char):
         temp_board = [
             LinearBoard.fromList(
-                [self.board[row].get_row(col) for row in range(BOARD_LENGTH)]
+                [self.board[row].get_col(col) for row in range(BOARD_LENGTH)]
             )
             for col in range(BOARD_LENGTH)
         ]
         return any(r.is_victory(char) for r in temp_board)
 
+    def get_row(self, index):
+        return self.board[index]
+
     def _any_sinking_victory(self, char):
         for row in range(BOARD_LENGTH):
             for col in range(BOARD_LENGTH):
                 if (col + VICTORY_STRIKE <= BOARD_LENGTH and row + VICTORY_STRIKE <= BOARD_LENGTH):
-                    if (all(self.board[row + i].get_row(col + i) == char for i in range(VICTORY_STRIKE))):
+                    if (all(self.board[row + i].get_col(col + i) == char for i in range(VICTORY_STRIKE))):
                         return True
         return False
     def _any_rising_victory(self, char):
         for row in range(BOARD_LENGTH):
             for col in range(BOARD_LENGTH):
                 if (col - (VICTORY_STRIKE - 1) >= 0 and row + VICTORY_STRIKE <= BOARD_LENGTH):
-                    if all(self.board[row + i].get_row(col - i) == char for i in range(VICTORY_STRIKE)):
+                    if all(self.board[row + i].get_col(col - i) == char for i in range(VICTORY_STRIKE)):
                         return True
         return False
     # DUNDERS
@@ -69,6 +72,7 @@ class SquareBoard:
     def __iter__(self) -> iter:
         return iter(self.board)
 
+
     def __eq__(self, other: object) -> bool:
         if isinstance(other, SquareBoard):
                 return self.board == other.board
@@ -76,3 +80,6 @@ class SquareBoard:
 
     def __hash__(self) -> int:
         return hash(self.board)
+
+    def __len__(self) -> int:
+        return len(self.board)

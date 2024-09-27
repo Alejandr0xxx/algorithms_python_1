@@ -50,3 +50,6 @@ class LinearBoard:
 
     def __hash__(self) -> int:
         return hash(self._row)
+
+    def __str__(self) -> str:
+        return self._row.__str__()

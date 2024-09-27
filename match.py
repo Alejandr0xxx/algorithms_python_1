@@ -11,6 +11,6 @@ class Match:
         curr_player = self._round_robin[0]
         self._round_robin.reverse()
         return curr_player
-    
+
     def get_player(self, char):
         return self._players.get(char, 'Not Found')

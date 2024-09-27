@@ -6,8 +6,18 @@ class Player:
         self.name = name
         self.char = char
         self._oracle = oracle
-        self._opponent = opponent
+        self.opponent = opponent
 
+    @property
+    def opponent(self):
+        return self._opponent
+    
+    @opponent.setter
+    def opponent(self, opponent):
+        if opponent != None:
+            self._opponent = opponent
+            opponent._opponent = self
+    
     def play(self, board):
         (bestOption, recommendations) = self._ask_oracle(board)
         if bestOption is not None:
@@ -36,9 +46,12 @@ class Player:
             return filtered_recommendations[0].index
         return None
 
+    #DUNDERS 
+    def __str__(self) -> str:
+        return f"{self.name}"
 
 class HumanPlayer(Player):
-    def __init__(self, name, char):
+    def __init__(self, name, char=None):
         super().__init__(name, char)
 
     # def _ask_oracle(self, board):

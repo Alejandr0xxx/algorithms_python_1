@@ -83,3 +83,6 @@ class SquareBoard:
 
     def __len__(self) -> int:
         return len(self.board)
+    
+    def __str__(self) -> str:
+        return "\n".join(str(row) for row in self.board)

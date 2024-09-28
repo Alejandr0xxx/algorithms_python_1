@@ -1,4 +1,5 @@
 from oracle import BaseOracle, RowClassification, RowRecommendation
+import random
 
 
 class Player:
@@ -11,13 +12,13 @@ class Player:
     @property
     def opponent(self):
         return self._opponent
-    
+
     @opponent.setter
     def opponent(self, opponent):
         if opponent != None:
             self._opponent = opponent
             opponent._opponent = self
-    
+
     def play(self, board):
         (bestOption, recommendations) = self._ask_oracle(board)
         if bestOption is not None:
@@ -42,13 +43,21 @@ class Player:
                 lambda r: r.recommendation != RowClassification.FULL, recommendations
             )
         )
+        # ORDER BY CLASSIFICATION VALUE
         if filtered_recommendations:
-            return filtered_recommendations[0]
+            max_recommendation = max(
+                filtered_recommendations, key=lambda r: r.recommendation.value
+            )
+            if max_recommendation.recommendation == RowClassification.WIN:
+                return max_recommendation
+            else:
+                return random.choice(filtered_recommendations)
         return None
 
-    #DUNDERS 
+    # DUNDERS
     def __str__(self) -> str:
         return f"{self.name}"
+
 
 class HumanPlayer(Player):
     def __init__(self, name, char=None):
@@ -56,8 +65,12 @@ class HumanPlayer(Player):
 
     def _ask_oracle(self, board):
         while True:
-            raw = int(input(f'Select a column between 0 and {len(board)}: '))
-            if _is_int(raw) and _is_non_full_row(board, raw) and _is_within_valid_row(board, raw):
+            raw = int(input(f"Select a column between 0 and {len(board)}: "))
+            if (
+                _is_int(raw)
+                and _is_non_full_row(board, raw)
+                and _is_within_valid_row(board, raw)
+            ):
                 return (RowRecommendation(raw, None), None)
 
 

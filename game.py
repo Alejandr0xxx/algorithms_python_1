@@ -75,18 +75,17 @@ class Game:
         for col in matrix:
             bt.columns.append(col)
         bt.columns.header = [str(i) for i in range(BOARD_LENGTH)]
-
         return print(bt)
 
         # print(self.board)
-
+    
     def _is_game_over(self, char):
         # Check if game is over (board is full or someone has won)
         if self.board.is_full():
-            return "full"
+            return 1
         elif self.board.is_victory(char):
-            return "win"
-
+            return 2
+        
     def _make_match(self):
         # Create match based on user's choice
         # Player 1 will always be the robot

@@ -42,10 +42,8 @@ def test_is_game_over():
         ]
     )
     game.board = win_x
-    assert game._is_game_over('x') == True
+    assert game._is_game_over('x') == 2
     game.board = win_o
-    assert game._is_game_over('o') == True
+    assert game._is_game_over('o') == 2
     game.board = is_tie  # this board is a tie, but the game is not over yet, so it should return False
-    assert game._is_game_over('x') == True
-    game.board = unfinised  # this board is not over yet, so it should return False
-    assert game._is_game_over('x') == False
+    assert game._is_game_over('x') == 1

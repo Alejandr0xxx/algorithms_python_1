@@ -53,3 +53,4 @@ class LinearBoard:
 
     def __str__(self) -> str:
         return self._row.__str__()
+    

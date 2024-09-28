@@ -12,5 +12,14 @@ class Match:
         self._round_robin.reverse()
         return curr_player
 
+    def get_winner(self, board):
+        if board.is_victory('x'):
+            return self._players['x']
+        elif board.is_victory('o'):
+            return self._players['o']
+        else:
+            return None
+        
+    
     def get_player(self, char):
         return self._players.get(char, 'Not Found')

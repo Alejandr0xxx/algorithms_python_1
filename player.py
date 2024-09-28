@@ -1,4 +1,4 @@
-from oracle import BaseOracle, RowClassification
+from oracle import BaseOracle, RowClassification, RowRecommendation
 
 
 class Player:
@@ -21,7 +21,7 @@ class Player:
     def play(self, board):
         (bestOption, recommendations) = self._ask_oracle(board)
         if bestOption is not None:
-            return self._play_on(board, bestOption)
+            return self._play_on(board, bestOption.index)
         else:
             raise Exception(f"Could not find best option")
 
@@ -43,7 +43,7 @@ class Player:
             )
         )
         if filtered_recommendations:
-            return filtered_recommendations[0].index
+            return filtered_recommendations[0]
         return None
 
     #DUNDERS 
@@ -54,12 +54,11 @@ class HumanPlayer(Player):
     def __init__(self, name, char=None):
         super().__init__(name, char)
 
-    # def _ask_oracle(self, board):
-
-    #     while True:
-    #         raw = int(input(f'Select a column between 0 and {len(board)}'))
-    #         if _is_int(raw) and _is_non_full_row(board, raw) and _is_within_valid_row(board, raw):
-    #             return (RowRecommendation(raw, None), None)
+    def _ask_oracle(self, board):
+        while True:
+            raw = int(input(f'Select a column between 0 and {len(board)}: '))
+            if _is_int(raw) and _is_non_full_row(board, raw) and _is_within_valid_row(board, raw):
+                return (RowRecommendation(raw, None), None)
 
 
 # VALIDATION FUNCTIONS

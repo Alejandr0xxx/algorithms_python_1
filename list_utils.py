@@ -11,3 +11,6 @@ def find_streak(lst, char, VICTORY_STRIKE):
 def transpose_elements(lst):
     """TRANSPOSE FUNCT"""
     return [list(row) for row in zip(*lst)]
+
+def reverse_board(board):
+    pass

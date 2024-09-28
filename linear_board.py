@@ -26,7 +26,7 @@ class LinearBoard:
         self._row[i] = char
     
     def is_full(self):
-        return len(self._row) == BOARD_LENGTH and not None in self._row   
+        return all([x is not None for x in self._row])   
     
     def is_empty(self):
             return all([x is None for x in self._row])

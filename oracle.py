@@ -1,11 +1,12 @@
 from enum import Enum
 from copy import deepcopy
 import random
-
+from global_settings import *
 
 class RowClassification(Enum):
     FULL = -1
-    MAYBE = 1
+    LOSE = 1
+    MAYBE = 10
     WIN = 100
 
 
@@ -40,8 +41,8 @@ class BaseOracle:
 
     def recommend(self, board, index, player):
         # Revisar si la fila está llena o no
-        is_full_or_not = self.is_full_or_not(board, index)
-        return RowRecommendation(index, is_full_or_not)
+        recommendation = self.is_full_or_not(board, index)
+        return RowRecommendation(index, recommendation)
 
     def is_full_or_not(self, board, index):
         if None in board.get_row(index):
@@ -50,21 +51,33 @@ class BaseOracle:
 
 
 class SmartOracle(BaseOracle):
-    def recommend(self, board, index, player):
+    def get_recommendation(self, board, index, player):
         """
         Obtiene las recomendaciones del oráculo, filtrando las que no están llenas y buscando posibles movimientos ganadores.
         """
-        recommendations = super().get_recommendations(board, index, player)
+        recommendations = super().get_recommendations(board, player)
         # Filtrar las recomendaciones que tienen espacio (MAYBE)
-        maybe_recommendations = [
-            rec
-            for rec in recommendations
-            if rec.recommendation != RowClassification.FULL
-        ]
+        maybe_recommendations = any(
+            [rec.recommendation == RowClassification.MAYBE for rec in recommendations]
+        )
+        classificated_recommendation = RowClassification.MAYBE
         if maybe_recommendations:
-            winning_move = self._is_winning_move(board, index, player)
-        return winning_move
-
+            if self._is_winning_move(board, index, player):
+                classificated_recommendation = RowClassification.WIN
+            elif self._is_losing_move(board, index, player):
+                classificated_recommendation = RowClassification.LOSE
+        return (classificated_recommendation.value, index)
+        
+    def _is_losing_move(self, board, index, player):
+        """"If player plays at index, he might lose next turn"""
+        tmp_board = self.play_on_temp_board(board, index, player)
+        lose = False
+        for i in range(BOARD_LENGTH):
+            if self._is_winning_move(tmp_board, i, player.opponent):
+                lose = True
+                break
+        return lose
+        
     def _is_winning_move(self, board, index, player):
         """
         Simula un movimiento en el tablero temporal para verificar si resulta en una victoria.
@@ -79,3 +92,4 @@ class SmartOracle(BaseOracle):
         tmp_board = deepcopy(board)
         tmp_board.add(player.char, index)
         return tmp_board
+    

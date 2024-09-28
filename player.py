@@ -3,11 +3,11 @@ import random
 
 
 class Player:
-    def __init__(self, name, char=None, oracle=BaseOracle, opponent=None):
+    def __init__(self, name, char=None, oracle=BaseOracle(), opponent=None):
         self.name = name
         self.char = char
         self._oracle = oracle
-        self.opponent = opponent
+        self._opponent = opponent
 
     @property
     def opponent(self):
@@ -19,15 +19,15 @@ class Player:
             self._opponent = opponent
             opponent._opponent = self
 
-    def play(self, board):
-        (bestOption, recommendations) = self._ask_oracle(board)
-        if bestOption is not None:
+    def play(self, board, player):
+        (bestOption, recommendations) = self._ask_oracle(board, player)
+        if bestOption is not None:  
             return self._play_on(board, bestOption.index)
         else:
             raise Exception(f"Could not find best option")
 
-    def _ask_oracle(self, board):
-        recommendations = self._oracle.get_recommendations(board)
+    def _ask_oracle(self, board, player):
+        recommendations = self._oracle.get_recommendations(board, player)
         bestOption = self._chose(recommendations)
         if recommendations is not None:
             return (bestOption, recommendations)
@@ -63,7 +63,7 @@ class HumanPlayer(Player):
     def __init__(self, name, char=None):
         super().__init__(name, char)
 
-    def _ask_oracle(self, board):
+    def _ask_oracle(self, board, player):
         while True:
             raw = int(input(f"Select a column between 0 and {len(board)}: "))
             if (

@@ -6,6 +6,7 @@ from square_board import SquareBoard
 from beautifultable import BeautifulTable
 from global_settings import *
 from list_utils import *
+from oracle import SmartOracle
 class RoundType(Enum):
     COMPUTER_VS_COMPUTER = auto()
     HUMAN_VS_COMPUTER = auto()
@@ -45,19 +46,33 @@ class Game:
         """
         # Aks for match type
         self._round_type = self._get_round_type_from_user()
+        if self._round_type == RoundType.HUMAN_VS_COMPUTER:
+            self._difficulty_level = self._get_difficulty_level_from_user()
         self.match = self._make_match()
-
+    
+    def  _get_difficulty_level_from_user(self):
+        print("Choose difficulty level:")
+        print("1. Easy")
+        print("2. Medium")
+        print("3. Hard")
+        while True:
+            level = str(input("Enter your choice (1/3) ")).strip()
+            if level not in str(range(1, 4)):
+                print("Invalid choice. Please try again.")
+                continue
+            break
+        return level
     def _start_game_loop(self):
         while True:
             curr_player = self.match.next_player
-            curr_player.play(self.board)
+            curr_player.play(self.board, curr_player)
             self.display_move(curr_player)
             self.display_board()
-            if self._is_game_over(curr_player.char) == "full":
+            if self._is_game_over(curr_player.char) == 1:
                 self.display_board
                 print("Its a tie!")
                 break
-            elif self._is_game_over(curr_player.char) == "win":
+            elif self._is_game_over(curr_player.char) == 2:
                 self.display_board()
                 self.display_winner()
                 break
@@ -89,8 +104,8 @@ class Game:
     def _make_match(self):
         # Create match based on user's choice
         # Player 1 will always be the robot
-        player1 = Player("Arthur Morgan")
-        player2 = Player("Dutch Vanderlinder")
+        player1 = Player("Arthur Morgan" , oracle=SmartOracle)
+        player2 = Player("Dutch Vanderlinder", oracle=SmartOracle)
         if self._round_type == RoundType.COMPUTER_VS_COMPUTER:
             return Match(player1, player2)
         elif self._round_type == RoundType.HUMAN_VS_COMPUTER:

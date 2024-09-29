@@ -17,3 +17,9 @@ def collapse_list(lst):
 
 def collapse_matrix(matrix):
     return '|'.join(collapse_list(row) for row in matrix)
+
+def replace_all(lst, old, new):
+    return [x if x != old else new for x in lst]
+
+def replace_all_in_matrix(matrix, old, new):
+    return [replace_all(row, old, new) for row in matrix if row != []]

@@ -1,10 +1,14 @@
 from linear_board import LinearBoard
 from global_settings import *
 from list_utils import *
-
+from string_utils import *
 
 class SquareBoard:
 
+    @classmethod
+    def FromBoardCode(cls, code):
+        return explode_list_of_strings(code)
+    
     @classmethod
     def fromList(cls, list_of_list):
         """ "Transform the list of list into a square board"""
@@ -16,6 +20,9 @@ class SquareBoard:
         board.board = list(map(lambda x: LinearBoard.fromList(x), list_of_list))
         return board
 
+    def as_code(self):
+        return collapse_matrix(self.board)
+        
     def __init__(self):
         self.board = [LinearBoard() for _ in range(BOARD_LENGTH)]
 

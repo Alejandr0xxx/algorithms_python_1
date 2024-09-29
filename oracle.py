@@ -3,10 +3,12 @@ from copy import deepcopy
 import random
 from global_settings import *
 
+
 class RowClassification(Enum):
     FULL = -1
     LOSE = 1
     MAYBE = 10
+    BLOCK_OPPONENT = 30
     WIN = 100
 
 
@@ -55,29 +57,31 @@ class SmartOracle(BaseOracle):
         """
         Obtiene las recomendaciones del oráculo, filtrando las que no están llenas y buscando posibles movimientos ganadores.
         """
-        recommendations = super().get_recommendations(board, player)
-        # Filtrar las recomendaciones que tienen espacio (MAYBE)
-        maybe_recommendations = any(
-            [rec.recommendation == RowClassification.MAYBE for rec in recommendations]
-        )
-        classificated_recommendation = RowClassification.MAYBE
-        if maybe_recommendations:
-            if self._is_winning_move(board, index, player):
-                classificated_recommendation = RowClassification.WIN
-            elif self._is_losing_move(board, index, player):
-                classificated_recommendation = RowClassification.LOSE
-        return (classificated_recommendation.value, index)
-        
+        if self._is_winning_move(board, index, player):
+            return RowRecommendation(index, RowClassification.WIN)
+        elif self._block_opponent_winning_move(board, player):
+            return RowRecommendation(index, RowClassification.BLOCK_OPPONENT)
+        elif self._is_losing_move(board, index, player):
+            return RowRecommendation(index, RowClassification.LOSE)
+        else:
+            return RowRecommendation(index, RowClassification.MAYBE)
+
     def _is_losing_move(self, board, index, player):
-        """"If player plays at index, he might lose next turn"""
+        """ "If player plays at index, he might lose next turn"""
         tmp_board = self.play_on_temp_board(board, index, player)
         lose = False
         for i in range(BOARD_LENGTH):
-            if self._is_winning_move(tmp_board, i, player.opponent):
+            if self._is_winning_move(tmp_board, i, player._opponent):
                 lose = True
                 break
         return lose
-        
+
+    def _block_opponent_winning_move(self, board, player):
+        for i in range(BOARD_LENGTH):
+            if self._is_winning_move(board, i, player._opponent):
+                return True
+        return False
+
     def _is_winning_move(self, board, index, player):
         """
         Simula un movimiento en el tablero temporal para verificar si resulta en una victoria.
@@ -92,4 +96,3 @@ class SmartOracle(BaseOracle):
         tmp_board = deepcopy(board)
         tmp_board.add(player.char, index)
         return tmp_board
-    

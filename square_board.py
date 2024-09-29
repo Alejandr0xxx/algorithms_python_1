@@ -7,7 +7,8 @@ class SquareBoard:
 
     @classmethod
     def FromBoardCode(cls, code):
-        return explode_list_of_strings(code)
+        board = code.split('|')
+        return SquareBoard.fromList(explode_list_of_strings(board))
     
     @classmethod
     def fromList(cls, list_of_list):

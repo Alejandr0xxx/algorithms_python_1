@@ -74,5 +74,4 @@ def test_board_codes():
     clone_board = SquareBoard.FromBoardCode(code)
     
     assert clone_board == board
-    assert clone_board.as_code == code
-    assert clone_board._as_code().raw_code == code.raw_code
+    assert clone_board.as_code() == code

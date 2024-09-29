@@ -1,16 +1,16 @@
-from oracle import BaseOracle, RowClassification, RowRecommendation, SmartOracle
+from oracle import RowClassification, RowRecommendation, LearningOracle
 import random
 from beautifultable import BeautifulTable
 from global_settings import *
-
+from move_class import Move
 
 class Player:
-    def __init__(self, name, char=None, oracle=BaseOracle(), opponent=None):
+    def __init__(self, name, char=None, oracle=LearningOracle(), opponent=None):
         self.name = name
         self.char = char
         self._oracle = oracle
         self._opponent = opponent
-
+        self._last_move = None
     @property
     def opponent(self):
         return self._opponent
@@ -24,7 +24,7 @@ class Player:
     def play(self, board, player):
         (bestOption, recommendations) = self._ask_oracle(board, player)
         if bestOption is not None:
-            return self._play_on(board, bestOption.index)
+            return self._play_on(board, bestOption.index, recommendations)
         else:
             raise Exception(f"Could not find best option")
 
@@ -35,8 +35,15 @@ class Player:
             return (bestOption, recommendations)
         return None
 
-    def _play_on(self, board, position):
+    def on_win():
+        pass
+    
+    def on_lose():
+        pass
+    
+    def _play_on(self, board, position, recommendations):
         board.add(self.char, position)
+        self._last_move = Move(position, board.as_code(), recommendations, self)
         return board
 
     def _chose(self, recommendations):
@@ -96,7 +103,7 @@ class HumanPlayer(Player):
                 return (RowRecommendation(raw, None), None)
 
     def _help_message(self, board):
-        tmp_oracle = SmartOracle()
+        tmp_oracle = LearningOracle()
         recommendations = [
                     tmp_oracle.get_recommendation(board, i, self)
                     for i in range(BOARD_LENGTH)
@@ -109,6 +116,11 @@ class HumanPlayer(Player):
 
 # VALIDATION FUNCTIONS
 
+class ReportingPlayer(Player):
+    def on_lose(self):
+        board_code = self._last_move.board_code
+        position = self._last_move.position
+        self._oracle.update_to_bad(board_code, self, position)
 
 def _is_within_valid_row(board, index):
     return index in range(len(board))

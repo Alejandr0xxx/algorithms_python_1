@@ -6,7 +6,7 @@ from global_settings import *
 
 class RowClassification(Enum):
     FULL = -1
-    LOSE = 1
+    BAD = 1
     MAYBE = 10
     BLOCK_OPPONENT = 30
     WIN = 100
@@ -62,19 +62,19 @@ class SmartOracle(BaseOracle):
         elif self._block_opponent_winning_move(board, player):
             return RowRecommendation(index, RowClassification.BLOCK_OPPONENT)
         elif self._is_losing_move(board, index, player):
-            return RowRecommendation(index, RowClassification.LOSE)
+            return RowRecommendation(index, RowClassification.BAD)
         else:
             return RowRecommendation(index, RowClassification.MAYBE)
 
     def _is_losing_move(self, board, index, player):
         """ "If player plays at index, he might lose next turn"""
         tmp_board = self.play_on_temp_board(board, index, player)
-        lose = False
+        BAD = False
         for i in range(BOARD_LENGTH):
             if self._is_winning_move(tmp_board, i, player._opponent):
-                lose = True
+                BAD = True
                 break
-        return lose
+        return BAD
 
     def _block_opponent_winning_move(self, board, player):
         for i in range(BOARD_LENGTH):
@@ -96,3 +96,41 @@ class SmartOracle(BaseOracle):
         tmp_board = deepcopy(board)
         tmp_board.add(player.char, index)
         return tmp_board
+
+
+class MemoizingOracle(SmartOracle):
+    def __init__(self):
+        super().__init__()
+        self._past_recommendations = {}
+
+    def _make_key(self, board, player):
+        """
+        Create a unique key for the board and player
+        """
+        return f"{board.as_code()}@{player.char}"
+
+    def get_recommendation(self, board, index, player):
+        """
+        Create a key
+        Look at cache
+        If found, return the recommendation else save in cache
+        """
+        key = self._make_key(board, player)
+        if key not in self._past_recommendations:
+            self._past_recommendations[key] = super().get_recommendation(
+                board, index, player
+            )
+
+        return self._past_recommendations[key]
+
+
+class LearningOracle(MemoizingOracle):
+    def update_to_bad(self, board_code, player, position):
+        """
+        If the player makes a bad move, update the cache for that board_code and player
+        """
+        key = self._make_key(board_code, player.char)
+        if key in self._past_recommendations:
+            self._past_recommendations[key][position] = RowRecommendation(
+                position, RowClassification.BAD
+            )

@@ -80,7 +80,7 @@ def test_base_oracle():
     
 #     assert winner_move, "El SmartOracle no recomendó una jugada posible en una fila con espacio."
 
-def test_is_lose_move():
+def test_is_BAD_move():
     board = SquareBoard.fromList(
         [
             ['x', 'o', 'o', None],
@@ -94,3 +94,16 @@ def test_is_lose_move():
     playeropponent = Player('B', 'o')
     player.opponent = playeropponent
     assert oracle._is_losing_move(board, 1, player) == True
+
+def test_no_good_options():
+    x = Player('Otto', char='x')
+    o = Player('Xavier', char='o', opponent=x)
+    
+    oracle = MemoizingOracle()
+    
+    maybe = SquareBoard.FromBoardCode('....|x...|....|....')
+    bad_and_full = SquareBoard.FromBoardCode('x...|oo..|o...|xoxo')
+    all_bad = SquareBoard.From('x...|oo..|o...|....')
+    assert oracle.no_good_options(maybe, x) == False
+    assert oracle.no_good_options(bad_and_full, x)
+    assert oracle.no_good_options(all_bad, x)

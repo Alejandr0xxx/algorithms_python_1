@@ -1,12 +1,12 @@
 import pyfiglet
 from enum import Enum, auto
 from match import Match
-from player import Player, HumanPlayer
+from player import ReportingPlayer, HumanPlayer
 from square_board import SquareBoard
 from beautifultable import BeautifulTable
 from global_settings import *
 from list_utils import *
-from oracle import SmartOracle, BaseOracle
+from oracle import SmartOracle, BaseOracle, LearningOracle
 
 
 class RoundType(Enum):
@@ -24,7 +24,7 @@ class Game:
     def __init__(
         self,
         round_type=RoundType.COMPUTER_VS_COMPUTER,
-        match=Match(Player("Arthur Morgan"), Player("Dutch Vanderlinde")),
+        match=Match(ReportingPlayer("Arthur Morgan"), ReportingPlayer("Dutch Vanderlinde")),
     ):
         self._round_type = round_type
         self.match = match
@@ -81,20 +81,18 @@ class Game:
             self.display_move(curr_player)
             self.display_board()
             if self._is_game_over(curr_player.char) == 1:
-                self.display_board
                 print("Its a tie!")
                 break
             elif self._is_game_over(curr_player.char) == 2:
-                self.display_board()
-                self.display_winner()
+                self.display_winner(curr_player.char)
                 break
 
-    def display_winner(self):
+    def display_winner(self, char):
         # Display the winner of the game
-        print(f"{self.match.get_winner(self.board)} wins!")
+        print(f"{self.match.get_winner(self.board)}({char}) wins!")
 
     def display_move(self, player):
-        print(f"{player.name} plays...")
+        print(f"{player.name}({player.char}), plays at column {player._last_move.position}")
 
     def display_board(self):
         matrix = self.board
@@ -119,10 +117,10 @@ class Game:
         _levels = {
             DifficultyLevel.LOW: BaseOracle(),
             DifficultyLevel.MEDIUM: SmartOracle(),
-            DifficultyLevel.HARD: SmartOracle(),
+            DifficultyLevel.HARD: LearningOracle(),
         }
-        player1 = Player("Arthur Morgan", oracle=SmartOracle())
-        player2 = Player("Dutch Vanderlinder", oracle=SmartOracle())
+        player1 = ReportingPlayer("Arthur Morgan", oracle=LearningOracle())
+        player2 = ReportingPlayer("Dutch Vanderlinder", oracle=LearningOracle())
         if self._round_type == RoundType.COMPUTER_VS_COMPUTER:
             return Match(player1, player2)
         elif self._round_type == RoundType.HUMAN_VS_COMPUTER:

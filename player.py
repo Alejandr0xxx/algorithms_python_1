@@ -101,7 +101,7 @@ class HumanPlayer(Player):
                     tmp_oracle.get_recommendation(board, i, self)
                     for i in range(BOARD_LENGTH)
                 ]
-        filteredRecommendations = [rec.recommendation.value for rec in recommendations]
+        filteredRecommendations = [rec.recommendation.name for rec in recommendations]
         bt = BeautifulTable()
         bt.rows.append(filteredRecommendations)
         bt.columns.header = [str(i) for i in range(BOARD_LENGTH)]

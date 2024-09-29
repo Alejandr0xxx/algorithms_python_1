@@ -12,5 +12,8 @@ def transpose_elements(lst):
     """TRANSPOSE FUNCT"""
     return [list(row) for row in zip(*lst)]
 
-def reverse_board(board):
-    pass
+def collapse_list(lst):
+    return ''.join(x if x != None else '.' for x in lst)
+
+def collapse_matrix(matrix):
+    return '|'.join(collapse_list(row) for row in matrix)

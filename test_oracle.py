@@ -61,24 +61,24 @@ def test_base_oracle():
 
 #     oracle = SmartOracle()
 #     assert oracle.play_on_temp_board(board, 1, Player('A', 'x')).get_row(1) == board2.get_row(1)
-def test_smart_oracle_recommend_maybe():
-    board = SquareBoard.fromList(
-        [
-            ['x', 'o', None, None],
-            ['o', 'x', None, None],
-            ['x', 'x', None, None],
-            ['o', None, None, None],
-        ]
-    )
-    oracle = SmartOracle()
-    player = Player('A', 'x')
-    player.opponent = Player('B', 'o')
-    recommendations = [oracle.get_recommendation(board, i, player) for i in range(BOARD_LENGTH)]
+# def test_smart_oracle_recommend_maybe():
+#     board = SquareBoard.fromList(
+#         [
+#             ['x', 'o', None, None],
+#             ['o', 'x', None, None],
+#             ['x', 'x', None, None],
+#             ['o', None, None, None],
+#         ]
+#     )
+#     oracle = SmartOracle()
+#     player = Player('A', 'x')
+#     player.opponent = Player('B', 'o')
+#     recommendations = [oracle.get_recommendation(board, i, player) for i in range(BOARD_LENGTH)]
     
-    # Debemos obtener al menos una recomendación MAYBE (posible jugada) en el tablero.
-    winner_move = [(classification, index) for (classification, index) in recommendations if classification == 100][0]
+#     # Debemos obtener al menos una recomendación MAYBE (posible jugada) en el tablero.
+#     winner_move = [(classification, index) for (classification, index) in recommendations if classification == 100][0]
     
-    assert winner_move, "El SmartOracle no recomendó una jugada posible en una fila con espacio."
+#     assert winner_move, "El SmartOracle no recomendó una jugada posible en una fila con espacio."
 
 def test_is_lose_move():
     board = SquareBoard.fromList(

@@ -1,6 +1,7 @@
-from oracle import BaseOracle, RowClassification, RowRecommendation
+from oracle import BaseOracle, RowClassification, RowRecommendation, SmartOracle
 import random
-
+from beautifultable import BeautifulTable
+from global_settings import *
 
 class Player:
     def __init__(self, name, char=None, oracle=BaseOracle(), opponent=None):
@@ -65,10 +66,28 @@ class HumanPlayer(Player):
 
     def _ask_oracle(self, board, player):
         while True:
-            raw = int(input(f"Select a column between 0 and {len(board)}: "))
+            tmp_oracle = SmartOracle()
+            raw = input(f"Select a column between 0 and {len(board) - 1} (h for help): ").strip()
+            if raw == 'h':
+                recommendations = ([tmp_oracle.get_recommendation(board, i, self) for i in range(len(board))])
+                bt = BeautifulTable()
+                bt.rows.append([rec[0] for rec in recommendations])
+                bt.columns.header = [str(i) for i in range(BOARD_LENGTH)]
+                print(bt)
+                continue
+            
+            if not _is_int(raw):
+                print("Please enter a column number")
+                continue            
+            
+            raw = int(raw)
+            
+            if raw not in range(len(board)):
+                print("Please enter a valid column number")
+                continue
+            
             if (
-                _is_int(raw)
-                and _is_non_full_row(board, raw)
+                _is_non_full_row(board, raw)
                 and _is_within_valid_row(board, raw)
             ):
                 return (RowRecommendation(raw, None), None)

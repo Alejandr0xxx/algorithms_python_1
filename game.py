@@ -6,16 +6,18 @@ from square_board import SquareBoard
 from beautifultable import BeautifulTable
 from global_settings import *
 from list_utils import *
-from oracle import SmartOracle
+from oracle import SmartOracle, BaseOracle
+
+
 class RoundType(Enum):
     COMPUTER_VS_COMPUTER = auto()
     HUMAN_VS_COMPUTER = auto()
 
 
 class DifficultyLevel(Enum):
-    LOW = auto()
-    MEDIUM = auto()
-    HIGH = auto()
+    LOW = 1
+    MEDIUM = 2
+    HARD = 3
 
 
 class Game:
@@ -26,9 +28,7 @@ class Game:
     ):
         self._round_type = round_type
         self.match = match
-
         self.board = SquareBoard()
-
     def start(self):
         self.print_logo()
 
@@ -49,19 +49,31 @@ class Game:
         if self._round_type == RoundType.HUMAN_VS_COMPUTER:
             self._difficulty_level = self._get_difficulty_level_from_user()
         self.match = self._make_match()
-    
-    def  _get_difficulty_level_from_user(self):
+
+    def _get_difficulty_level_from_user(self):
         print("Choose difficulty level:")
         print("1. Easy")
         print("2. Medium")
         print("3. Hard")
         while True:
-            level = str(input("Enter your choice (1/3) ")).strip()
-            if level not in str(range(1, 4)):
+            try:
+                level = int(input("Enter your choice (1/3) ").strip())
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+                continue
+            if level not in range(4):
                 print("Invalid choice. Please try again.")
                 continue
+
+            match level:
+                case 1:
+                    return DifficultyLevel.LOW
+                case 2:
+                    return DifficultyLevel.MEDIUM
+                case 3:
+                    return DifficultyLevel.HARD
             break
-        return level
+
     def _start_game_loop(self):
         while True:
             curr_player = self.match.next_player
@@ -93,24 +105,31 @@ class Game:
         return print(bt)
 
         # print(self.board)
-    
+
     def _is_game_over(self, char):
         # Check if game is over (board is full or someone has won)
         if self.board.is_full():
             return 1
         elif self.board.is_victory(char):
             return 2
-        
+
     def _make_match(self):
         # Create match based on user's choice
         # Player 1 will always be the robot
-        player1 = Player("Arthur Morgan" , oracle=SmartOracle)
-        player2 = Player("Dutch Vanderlinder", oracle=SmartOracle)
+        _levels = {
+            DifficultyLevel.LOW: BaseOracle(),
+            DifficultyLevel.MEDIUM: SmartOracle(),
+            DifficultyLevel.HARD: SmartOracle(),
+        }
+        player1 = Player("Arthur Morgan", oracle=SmartOracle())
+        player2 = Player("Dutch Vanderlinder", oracle=SmartOracle())
         if self._round_type == RoundType.COMPUTER_VS_COMPUTER:
             return Match(player1, player2)
         elif self._round_type == RoundType.HUMAN_VS_COMPUTER:
+            player1._oracle = _levels[self._difficulty_level]
             username = self._ask_for_name()
             player2 = HumanPlayer(username)
+            
             return Match(player1, player2)
         else:
             print("Invalid match type. Exiting...")
